@@ -16,7 +16,7 @@ CPF = 168.995.350-09
 11 > 9 = 0            #
 Digito 1 = 0          #   Digito 2 = 9
 """
-# Bora galera
+# Bora galera teste
 # Loop infinito
 while True:
     # cpf = '16899535009'
