@@ -28,18 +28,17 @@ class MainApp(App):
         foto_perfil.source = f"icones/fotos_perfil/{avatar}"
 
         # preencher lista de vendas
-        try:
-            vendas = requisicao_dic['vendas'][1:]
-            for venda in vendas:
-                banner = BannerVenda(cliente=venda['cliente'], foto_cliente=venda['foto_cliente'],
-                                     produto=venda['produto'], foto_produto=venda['foto_produto'],
-                                     data=venda['data'], preco=venda['preco'],
-                                     unidade=venda['unidade'], quantidade=venda['quantidade'])
-                pagina_homepage = self.root.ids['homepage']
-                lista_vendas = pagina_homepage.ids['lista_vendas']
-                lista_vendas.add.widget(banner)
-        except:
-            pass
+
+        vendas = requisicao_dic['vendas'][1:]
+        for venda in vendas:
+            banner = BannerVenda(cliente=venda["cliente"], foto_cliente=venda["foto_cliente"],
+                                 produto=venda["produto"], foto_produto=venda["foto_produto"],
+                                 data=venda["data"], preco=venda["preco"],
+                                 unidade=venda["unidade"], quantidade=venda["quantidade"])
+            pagina_homepage = self.root.ids['homepage']
+            lista_vendas = pagina_homepage.ids['lista_vendas']
+            lista_vendas.add_widget(banner)
+
 
     def mudar_tela(self, id_tela):
         gerenciador_telas = self.root.ids["screen_manager"]
