@@ -12,8 +12,6 @@ class MyFirebase():
         requisicao = requests.post(link, data=info)
         requisicao_dic = requisicao.json()
 
-
-
         if requisicao.ok:
             print("usuario criado")
             id_token = requisicao_dic["idToken"]
@@ -27,9 +25,20 @@ class MyFirebase():
             with open("refreshtoken.txt", "w") as arquivo:
                 arquivo.write(refresh_token)
 
+            req_id = requests.get("https://aplicativovendas-f1070-default-rtdb.firebaseio.com/proximo_id_vendedor.json")
+            id_vendedor = req_id.json()
+
             link = f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{local_id}.json"
-            info_usuario = '{"avatar": "foto1.png", "equipe": "", "total_vendas": "0", "vendas": ""}'
+
+            info_usuario = f'{{"avatar": "foto1.png", "equipe": "", "total_vendas": "0", "vendas": "",' \
+                           f' "id_vendedor": "{id_vendedor}"}}'
             requisicao_usuario = requests.patch(link, data=info_usuario)
+
+            # atualizar o valor do proximo id vendedor
+            proximo_id_vendedor = int(id_vendedor) + 1
+            info_id_vendedor = f'{{"proximo_id_vendedor": "{proximo_id_vendedor}"}}'
+            requests.patch("https://aplicativovendas-f1070-default-rtdb.firebaseio.com/.json", data=info_id_vendedor)
+
             meu_aplicativo.carregar_infos_usuario()
             meu_aplicativo.mudar_tela("homepage")
 
@@ -40,7 +49,6 @@ class MyFirebase():
             pagina_login.ids["mensagem_login"].text = mensagem_erro
             pagina_login.ids["mensagem_login"].color = (1, 0, 0, 1)
 
-
     def fazer_login(self, email, senha):
         link = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={self.API_KEY}"
         info = {"email": email, "password": senha, "returnSecureToken": True}
@@ -48,7 +56,7 @@ class MyFirebase():
         requisicao_dic = requisicao.json()
 
         if requisicao.ok:
-            refresh_token = requisicao_dic["refreshtoken"]
+            refresh_token = requisicao_dic["refreshToken"]
             local_id = requisicao_dic["localId"]
             id_token = requisicao_dic["idToken"]
 
@@ -59,7 +67,6 @@ class MyFirebase():
             with open("refreshtoken.txt", "w") as arquivo:
                 arquivo.write(refresh_token)
 
-
             meu_aplicativo.carregar_infos_usuario()
             meu_aplicativo.mudar_tela("homepage")
 
@@ -69,7 +76,6 @@ class MyFirebase():
             pagina_login = meu_aplicativo.root.ids["loginpage"]
             pagina_login.ids["mensagem_login"].text = mensagem_erro
             pagina_login.ids["mensagem_login"].color = (1, 0, 0, 1)
-
 
     def trocar_token(self, refresh_token):
         link = f"https://securetoken.googleapis.com/v1/token?key={self.API_KEY}"

@@ -49,6 +49,30 @@ class MainApp(App):
             foto_perfil = self.root.ids["foto_perfil"]
             foto_perfil.source = f"icones/fotos_perfil/{avatar}"
 
+            # preencher o ID unico
+            id_vendedor = requisicao_dic['id_vendedor']
+            pagina_ajustes = self.root.ids["ajustespage"]
+            pagina_ajustes.ids["id_vendedor"].text = f"Seu ID Único: {id_vendedor}"
+
+            # preencher total de vendas
+            total_vendas = requisicao_dic['total_vendas']
+            homepage = self.root.ids["homepage"]
+            homepage.ids["label_total_vendas"].text = f"[color=#000000]Total de Vendas:[/color] [b]R$ {total_vendas}[/b]"
+
+
+
+
+
+            # preencher lista de vendas
+
+
+
+
+
+
+
+
+
             # preencher lista de vendas
             try:
                 vendas = requisicao_dic['vendas'][1:]
