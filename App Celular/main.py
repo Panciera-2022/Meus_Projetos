@@ -33,7 +33,7 @@ class MainApp(App):
 
 
     def carregar_infos_usuario(self):
-        # try:
+        try:
             with open("refreshtoken.txt", "r") as arquivo:
                 refresh_token = arquivo.read()
             local_id, id_token = self.firebase.trocar_token(refresh_token)
@@ -64,8 +64,8 @@ class MainApp(App):
             except:
                 pass
             self.mudar_tela("homepage")
-        # except:
-        #     pass
+        except:
+            pass
     def mudar_tela(self, id_tela):
         gerenciador_telas = self.root.ids["screen_manager"]
         gerenciador_telas.current = id_tela
