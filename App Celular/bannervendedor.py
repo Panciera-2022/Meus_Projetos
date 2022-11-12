@@ -4,10 +4,13 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.graphics import Color, Rectangle
 import requests
 
+
+
 class BannerVendedor(FloatLayout):
+
     def __init__(self, **kwargs):
         super().__init__()
-        
+
         with self.canvas:
             Color(rgb=(0, 0, 0, 1))
             self.rec = Rectangle(size=self.size, pos=self.pos)
