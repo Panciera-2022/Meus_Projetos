@@ -5,7 +5,7 @@ from kivy.graphics import Color, Rectangle
 import requests
 
 class BannerVendedor(FloatLayout):
-    def __int__(self, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__()
         
         with self.canvas:
