@@ -89,7 +89,7 @@ class MainApp(App):
             except:
                 pass
 
-            # Preencher equipe de vendedores
+            # preencher equipe de vendedores
             equipe = requisicao_dic["equipe"]
             lista_equipe = equipe.split(",")
             pagina_listavendedores = self.root.ids["listarvendedorespage"]
