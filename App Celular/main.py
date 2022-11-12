@@ -7,6 +7,7 @@ from bannervenda import BannerVenda
 import os
 from functools import partial
 from myfirebase import MyFirebase
+from bannervendedor import BannerVendedor
 
 GUI = Builder.load_file("main.kv")
 
@@ -87,6 +88,18 @@ class MainApp(App):
                     lista_vendas.add_widget(banner)
             except:
                 pass
+
+            # Preencher equipe de vendedores
+            equipe = requisicao_dic["equipe"]
+            lista_equipe = equipe.split(",")
+            pagina_listavendedores = self.root.ids["listarvendedorespage"]
+            lista_vendedores = pagina_listavendedores.ids["lista_vendedores"]
+
+            for id_vendedor_equipe in lista_equipe:
+                if id_vendedor_equipe != "":
+                    banner_vendedor = BannerVendedor(id_vendedor=id_vendedor_equipe)
+                    lista_vendedores.add_widget(banner_vendedor)
+
             self.mudar_tela("homepage")
         except:
             pass
