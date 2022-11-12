@@ -24,9 +24,9 @@ class BannerVendedor(FloatLayout):
 
         imagem = ImageButton(source=f"icones/fotos_perfil/{avatar}",
                              pos_hint={"right": 0.4, "top": 0.9}, size_hint=(0.3, 0.8))
-        label_id = LabelButton(text=f"Id Vendedor: {id_vendedor}",
+        label_id = LabelButton(text=f"ID Vendedor: {id_vendedor}",
                                pos_hint={"right": 0.9, "top": 0.9}, size_hint=(0.5, 0.5))
-        label_total = LabelButton(text=f"Total de Vendas R${total_vendas}",
+        label_total = LabelButton(text=f"Total de Vendas: R${total_vendas}",
                                   pos_hint={"right": 0.9, "top": 0.6}, size_hint=(0.5, 0.5))
 
         self.add_widget(imagem)
