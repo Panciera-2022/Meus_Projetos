@@ -94,6 +94,7 @@ class MainApp(App):
             lista_equipe = equipe.split(",")
             pagina_listavendedores = self.root.ids["listarvendedorespage"]
             lista_vendedores = pagina_listavendedores.ids["lista_vendedores"]
+
             for id_vendedor_equipe in lista_equipe:
                 if id_vendedor_equipe != "":
                     banner_vendedor = BannerVendedor(id_vendedor=id_vendedor_equipe)
