@@ -44,7 +44,6 @@ class MainApp(App):
             # pegar informações do usuário
             requisicao = requests.get(f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{self.local_id}.json")
             requisicao_dic = requisicao.json()
-
             # preencher foto perfil
             avatar = requisicao_dic['avatar']
             foto_perfil = self.root.ids["foto_perfil"]
@@ -94,9 +93,9 @@ class MainApp(App):
             lista_equipe = equipe.split(",")
             pagina_listavendedores = self.root.ids["listarvendedorespage"]
             lista_vendedores = pagina_listavendedores.ids["lista_vendedores"]
-
             for id_vendedor_equipe in lista_equipe:
                 if id_vendedor_equipe != "":
+
                     banner_vendedor = BannerVendedor(id_vendedor=id_vendedor_equipe)
                     lista_vendedores.add_widget(banner_vendedor)
 
