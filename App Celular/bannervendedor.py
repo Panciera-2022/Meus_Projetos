@@ -17,7 +17,6 @@ class BannerVendedor(FloatLayout):
         self.bind(pos=self.atualizar_rec, size=self.atualizar_rec)
 
         id_vendedor = kwargs["id_vendedor"]
-
         link = f'https://aplicativovendas-f1070-default-rtdb.firebaseio.com/.json?orderBy="id_vendedor"&equalTo="{id_vendedor}"'
         requisicao = requests.get(link)
         requisicao_dic = requisicao.json()
