@@ -29,9 +29,7 @@ class MyFirebase():
             id_vendedor = req_id.json()
 
             link = f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{local_id}.json"
-
-            info_usuario = f'{{"avatar": "foto1.png", "equipe": "", "total_vendas": "0", "vendas": "",' \
-                           f' "id_vendedor": "{id_vendedor}"}}'
+            info_usuario = f'{{"avatar": "foto1.png", "equipe": "", "total_vendas": "0", "vendas": "", "id_vendedor": "{id_vendedor}"}}'
             requisicao_usuario = requests.patch(link, data=info_usuario)
 
             # atualizar o valor do proximo id vendedor
