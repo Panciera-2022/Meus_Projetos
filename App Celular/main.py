@@ -42,6 +42,14 @@ class MainApp(App):
 
 
         #carregar as fotos dos produtos
+        arquivos = os.listdir("icones/fotos_produtos")
+        pagina_adicionarvendas = self.root.ids["adicionarvendaspage"]
+        lista_produtos = pagina_adicionarvendas.ids["lista_produtos"]
+        for foto_produto in arquivos:
+            imagem = ImageButton(source=f"icones/fotos_produtos/{foto_produto}")
+            label = LabelButton(text=foto_produto.replace(".png", "").capitalize())
+            lista_produtos.add_widget(imagem)
+            lista_produtos.add_widget(label)
 
         # carrega as infos do usuário
         self.carregar_infos_usuario()
