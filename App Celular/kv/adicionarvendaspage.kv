@@ -5,65 +5,70 @@
                 size: self.size
                 pos: self.pos
                 source: "icones/bg1.png"
+
         # selecionar cliente
         Label:
             pos_hint: {"right": 1, "top": 1}
             size_hint: 1, 0.05
             text: "Selecione o Cliente"
+            id: label_selecione_cliente
         ScrollView:
             pos_hint: {"right": 1, "top": 0.95}
             size_hint: 1, 0.15
             GridLayout:
                 rows: 1
-                id : lista_clientes
+                id: lista_clientes
                 size_hint_x: None
                 width: self.minimum_width
-                col_default_height: "100dp"
+                col_default_width: "100dp"
                 col_force_default: True
 
-        # Selecionar Produto
+        #selecionar produto
         Label:
             pos_hint: {"right": 1, "top": 0.75}
             size_hint: 1, 0.05
             text: "Selecione o Produto"
+            id: label_selecione_produto
         ScrollView:
             pos_hint: {"right": 1, "top": 0.7}
             size_hint: 1, 0.15
             GridLayout:
                 rows: 1
-                id : lista_produtos
+                id: lista_produtos
                 size_hint_x: None
                 width: self.minimum_width
-                col_default_height: "100dp"
+                col_default_width: "100dp"
                 col_force_default: True
         Label:
             id: label_data
             pos_hint: {"right": 1, "top": 0.5}
             size_hint: 1, 0.05
             bold: True
-            text: "Data 01/11/2022"
+            text: "Data: 01/01/2021"
         # selecionar a unidade
         GridLayout:
-            rows:1
+            rows: 1
             pos_hint: {"right": 0.9, "top": 0.45}
             size_hint: 0.8, 0.1
-            Label:
-                text: "Kg"
+            LabelButton:
+                text: "kg"
                 id: unidades_kg
-            Label:
+                on_release: app.selecionar_unidade("unidades_kg")
+            LabelButton:
                 text: "unidades"
                 id: unidades_unidades
-            Label:
+                on_release: app.selecionar_unidade("unidades_unidades")
+            LabelButton:
                 text: "litros"
                 id: unidades_litros
+                on_release: app.selecionar_unidade("unidades_litros")
 
-
-        # Botões
+        # botoes
         LabelButton:
             canvas.before:
                 Rectangle:
-                    size: self.size
                     pos: self.pos
+                    size: self.size
                     source: "icones/botao.png" if self.state == "normal" else "icones/botao_apertado.png"
             on_release: app.mudar_tela("homepage")
             text: "Cancelar"
@@ -72,34 +77,34 @@
         LabelButton:
             canvas.before:
                 Rectangle:
-                    size: self.size
                     pos: self.pos
+                    size: self.size
                     source: "icones/botao.png" if self.state == "normal" else "icones/botao_apertado.png"
-            on_release: print("adicionar venda")
+            on_release: app.adicionar_venda()
             text: "Adicionar Venda"
             pos_hint: {"right": 0.95, "top": 0.2}
             size_hint: 0.4, 0.2
 
 
-
         # preço total
-        GridLayout
-            rows:1
+        GridLayout:
+            rows: 1
             pos_hint: {"right": 0.9, "top": 0.355}
             size_hint: 0.8, 0.075
             Label:
                 text: "Preço Total (R$)"
+                id: label_preco
             TextInput:
-                id: preço_total
+                id: preco_total
                 hint_text: "Digite apenas números"
-
         # quantidade
-        GridLayout
-            rows:1
+        GridLayout:
+            rows: 1
             pos_hint: {"right": 0.9, "top": 0.275}
             size_hint: 0.8, 0.075
             Label:
                 text: "Quantidade Total"
+                id: label_quantidade
             TextInput:
-                id: preço_total
+                id: quantidade
                 hint_text: "0"
