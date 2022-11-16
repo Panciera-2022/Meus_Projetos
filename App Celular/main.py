@@ -47,20 +47,24 @@ class MainApp(App):
 
             # preencher foto perfil
             avatar = requisicao_dic['avatar']
+            self.avatar = avatar
             foto_perfil = self.root.ids["foto_perfil"]
             foto_perfil.source = f"icones/fotos_perfil/{avatar}"
 
             # preencher o ID unico
             id_vendedor = requisicao_dic['id_vendedor']
+            self.id_vendedor = id_vendedor
             pagina_ajustes = self.root.ids["ajustespage"]
             pagina_ajustes.ids["id_vendedor"].text = f"Seu ID Único: {id_vendedor}"
 
             # preencher total de vendas
             total_vendas = requisicao_dic['total_vendas']
+            self.total_vendas = total_vendas
             homepage = self.root.ids["homepage"]
             homepage.ids["label_total_vendas"].text = f"[color=#000000]Total de Vendas:[/color] [b]R$ {total_vendas}[/b]"
 
-
+            # Preencher Equipe
+            self.equipe = requisicao_dic["equipe"]
 
 
 
@@ -77,6 +81,7 @@ class MainApp(App):
             # preencher lista de vendas
             try:
                 vendas = requisicao_dic['vendas'][1:]
+                self.vendas = vendas
                 pagina_homepage = self.root.ids['homepage']
                 lista_vendas = pagina_homepage.ids['lista_vendas']
                 for venda in vendas:
@@ -115,6 +120,33 @@ class MainApp(App):
         requisicao = requests.patch(f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{self.local_id}.json"
                                     , data=info)
 
+
+    def adicionar_vendedor(self, id_vendedor_adicionado):
+        link = f'https://aplicativovendas-f1070-default-rtdb.firebaseio.com/.json?orderBy="id_vendedor"&equalTo="{id_vendedor_adicionado}"'
+        requisicao = requests.get(link)
+        requisicao_dic = requisicao.json()
+        print(requisicao_dic)
+
+        pagina_adicionarvendedor = self.root.ids["adicionarvendedorpage"]
+        mensagem_texto = pagina_adicionarvendedor.ids["mensagem_outrovendedor"]
+
+        if requisicao_dic == {}:
+            mensagem_texto.text = "Usuário não encontrado"
+        else:
+            equipe = self.equipe.split(",")
+            if id_vendedor_adicionado in equipe:
+                mensagem_texto.text = "Vendedor já faz parte da equipe"
+            else:
+                self.equipe = self.equipe + f",{id_vendedor_adicionado}"
+                info = f'{{"equipe": "{self.equipe}"}}'
+                requests.patch(f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{self.local_id}.json",
+                               data=info)
+                mensagem_texto.text = "Vendedor adicionado com sucesso"
+                # Adicionar um novo banner na lista de vendedores
+                pagina_listavendedores = self.root.ids["listarvendedorespage"]
+                lista_vendedores = pagina_listavendedores.ids["lista_vendedores"]
+                banner_vendedor = BannerVendedor(id_vendedor=id_vendedor_adicionado)
+                lista_vendedores.add_widget(banner_vendedor)
 
 
 

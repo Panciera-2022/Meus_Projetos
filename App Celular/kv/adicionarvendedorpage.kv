@@ -18,8 +18,8 @@
                     size: self.size
                     pos: self.pos
                     source: "icones/botao.png" if self.state == "normal" else "icones/botao_apertado.png"
-            on_release: print("vendedor add")
-            text: "Acompanhar vendedor"
+            on_release: app.adicionar_vendedor(input_id_outrovendedor.text)
+            text: "Adicionar vendedor"
             pos_hint: {"right": 0.9, "top": 0.55}
             size_hint: 0.8, 0.2
 
@@ -32,7 +32,7 @@
             text: ""
             markup: True
             bold: True
-            pos_hint: {"right": 0.9, "top": 0.7}
+            pos_hint: {"right": 0.9, "top": 0.6}
             size_hint: 0.8, 0.1
             id: mensagem_outrovendedor
 
