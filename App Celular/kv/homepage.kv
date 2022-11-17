@@ -17,9 +17,18 @@
             id: label_total_vendas
             markup: True
 
-        # lista de vendas
-        # scroll view define que vai ter scroll na tela
+        #lista de Vendas
+        ScrollView:
+            pos_hint:{"rigth": 1, "top": 0.75}
+            size_hint: 1, 0.63
+            GridLayout:
+                cols: 1
 
+                id: lista_vendas
+                size_hint_y: None
+                height: self.minimum_height
+                row_defaut_height: "90dp"
+                row_force_defaut: True
 
         # 3 botoes home page
         GridLayout:

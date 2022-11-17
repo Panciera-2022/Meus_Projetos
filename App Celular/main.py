@@ -286,14 +286,13 @@ class MainApp(App):
             lista_vendas = pagina_homepage.ids["lista_vendas"]
             lista_vendas.add_widget(banner)
 
-            requisicao = requests.get(
-                f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{self.local_id}/total_vendas.json?auth={self.id_token}")
+            requisicao = requests.get(f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{self.local_id}"
+                                      f"/total_vendas.json?auth={self.id_token}")
             total_vendas = float(requisicao.json())
             total_vendas += preco
             info = f'{{"total_vendas": "{total_vendas}"}}'
-            requests.patch(
-                f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{self.local_id}.json?auth={self.id_token}",
-                data=info)
+            requests.patch(f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{self.local_id}"
+                           f".json?auth={self.id_token}", data=info)
             homepage = self.root.ids["homepage"]
             homepage.ids["label_total_vendas"].text = f"[color=#000000]Total de Vendas:[/color] [b]R${total_vendas}[/b]"
             self.mudar_tela("homepage")
