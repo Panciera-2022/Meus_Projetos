@@ -14,6 +14,9 @@ GUI = Builder.load_file("main.kv")
 
 
 class MainApp(App):
+    cliente = None
+    produto = None
+    unidade = None
 
 
     # constroi a parte visual
@@ -184,6 +187,7 @@ class MainApp(App):
 
 
     def selecionar_cliente(self, foto, *args):
+        self.cliente = foto.replace(".png", "")
         # pintar de branco todas as outras letras
         pagina_adicionarvendas = self.root.ids["adicionarvendaspage"]
         lista_clientes = pagina_adicionarvendas.ids["lista_clientes"]
@@ -200,6 +204,7 @@ class MainApp(App):
                 pass
 
     def selecionar_produto(self, foto, *args):
+        self.produto = foto.replace(".png", "")
         # pintar de branco todas as outras letras
         pagina_adicionarvendas = self.root.ids["adicionarvendaspage"]
         lista_produtos = pagina_adicionarvendas.ids["lista_produtos"]
@@ -219,6 +224,7 @@ class MainApp(App):
     def selecionar_unidade(self, id_label, *args):
         pagina_adicionarvendas = self.root.ids["adicionarvendaspage"]
 
+
         #pintar todo mundo de branco
         self.unidade = id_label.replace("unidades_", "")
         pagina_adicionarvendas.ids["unidades_kg"].color = (1, 1, 1, 1)
@@ -227,6 +233,74 @@ class MainApp(App):
 
         # pintar o cara selecionado de azul
         pagina_adicionarvendas.ids[id_label].color = (0, 207/255, 219/255, 1)
+
+    def adicionar_venda(self):
+        cliente = self.cliente
+        produto = self.produto
+        unidade = self.unidade
+
+        pagina_adicionarvendas = self.root.ids["adicionarvendaspage"]
+        data = pagina_adicionarvendas.ids["label_data"].text.replace("Data: ", "")
+        preco = pagina_adicionarvendas.ids["preco_total"].text
+        quantidade = pagina_adicionarvendas.ids["quantidade"].text
+
+        if not cliente:
+            pagina_adicionarvendas.ids["label_selecione_cliente"].color = (1, 0, 0, 1)
+        if not produto:
+            pagina_adicionarvendas.ids["label_selecione_produto"].color = (1, 0, 0, 1)
+        if not unidade:
+            pagina_adicionarvendas.ids["unidades_kg"].color = (1, 0, 0, 1)
+            pagina_adicionarvendas.ids["unidades_unidades"].color = (1, 0, 0, 1)
+            pagina_adicionarvendas.ids["unidades_litros"].color = (1, 0, 0, 1)
+        if not preco:
+            pagina_adicionarvendas.ids["label_preco"].color = (1, 0, 0, 1)
+        else:
+            try:
+                preco = float(preco)
+            except:
+                pagina_adicionarvendas.ids["label_preco"].color = (1, 0, 0, 1)
+        if not quantidade:
+            pagina_adicionarvendas.ids["label_quantidade"].color = (1, 0, 0, 1)
+        else:
+            try:
+                quantidade = float(quantidade)
+            except:
+                pagina_adicionarvendas.ids["label_quantidade"].color = (1, 0, 0, 1)
+
+        # dado que ele preencheu tudo, vamos executar o código de adicionar venda
+        if cliente and produto and unidade and preco and quantidade and (type(preco) == float) and (
+                type(quantidade) == float):
+            foto_produto = produto + ".png"
+            foto_cliente = cliente + ".png"
+
+            info = f'{{"cliente": "{cliente}", "produto": "{produto}", "foto_cliente": "{foto_cliente}", ' \
+                   f'"foto_produto": "{foto_produto}", "data": "{data}", "unidade": "{unidade}", ' \
+                   f'"preco": "{preco}", "quantidade": "{quantidade}"}}'
+            requests.post(
+                f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{self.local_id}/vendas.json?auth={self.id_token}",
+                data=info)
+
+            banner = BannerVenda(cliente=cliente, produto=produto, foto_cliente=foto_cliente, foto_produto=foto_produto,
+                                 data=data, preco=preco, quantidade=quantidade, unidade=unidade)
+            pagina_homepage = self.root.ids["homepage"]
+            lista_vendas = pagina_homepage.ids["lista_vendas"]
+            lista_vendas.add_widget(banner)
+
+            requisicao = requests.get(
+                f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{self.local_id}/total_vendas.json?auth={self.id_token}")
+            total_vendas = float(requisicao.json())
+            total_vendas += preco
+            info = f'{{"total_vendas": "{total_vendas}"}}'
+            requests.patch(
+                f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{self.local_id}.json?auth={self.id_token}",
+                data=info)
+            homepage = self.root.ids["homepage"]
+            homepage.ids["label_total_vendas"].text = f"[color=#000000]Total de Vendas:[/color] [b]R${total_vendas}[/b]"
+            self.mudar_tela("homepage")
+
+        self.cliente = None
+        self.produto = None
+        self.unidade = None
 
 
 MainApp().run()
