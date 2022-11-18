@@ -8,12 +8,12 @@
         Label:
             canvas.before:
                 Rectangle:
-                    size: self.size
                     pos: self.pos
+                    size: self.size
                     source: "icones/botao_fino.png"
-            pos_hint: {"right": 0.85, "top": 0.95}
+            pos_hint: {"right":0.85 , "top": 0.95}
             size_hint: 0.7, 0.2
-            text: "Total de Vendas: R$1"
+            text:"Total de Vendas: R$1"
             id: label_total_vendas
             markup: True
 
@@ -30,10 +30,12 @@
                 row_defaut_height: "90dp"
                 row_force_defaut: True
 
-        # 3 botoes home page
+
+        # 3 botoes da homepage
+
         GridLayout:
             rows: 1
-            pos_hint: {"right":1, "top": 0.12}
+            pos_hint: {"right": 1 , "top": 0.12}
             size_hint: 1, 0.12
             canvas:
                 Color:
@@ -42,11 +44,12 @@
                     size: self.size
                     pos: self.pos
             ImageButton:
-                source: "icones/add.png"
-                on_release: app.mudar_tela("adicionarvendaspage")
+                source:"icones/add.png"
+                on_release:app.mudar_tela("adicionarvendaspage")
             ImageButton:
-                source: "icones/salesman.png"
-                on_release: app.mudar_tela("listarvendedorespage")
+                source:"icones/salesman.png"
+                on_release:app.mudar_tela("listarvendedorespage")
             ImageButton:
-                source: "icones/settings.png"
-                on_release: app.mudar_tela("ajustespage")
+                source:"icones/settings.png"
+                on_release:app.mudar_tela("ajustespage")
+
