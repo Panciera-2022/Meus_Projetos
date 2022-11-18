@@ -32,5 +32,7 @@ class LoginPage(Screen):
     pass
 
 
+class VendasOutroVendedorPage(Screen):
+    pass
 
 

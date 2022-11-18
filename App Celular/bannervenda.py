@@ -25,13 +25,13 @@ class BannerVenda(GridLayout):
         data = kwargs['data']
         unidade = kwargs['unidade']
         quantidade = float(kwargs['quantidade'])
-        preco = float( kwargs['preco'])
+        preco = float(kwargs['preco'])
 
         esquerda = FloatLayout()
 
         esquerda_imagem = Image(pos_hint={'right': 1, 'top': 0.95}, size_hint=(1, 0.75),
                                 source=f'icones/fotos_clientes/{foto_cliente}')
-        esquerda_label = Label(text=cliente, size_hint = (1, 0.2), pos_hint={'right': 1, 'top': 0.2})
+        esquerda_label = Label(text=cliente, size_hint=(1, 0.2), pos_hint={'right': 1, 'top': 0.2})
         esquerda.add_widget(esquerda_imagem)
         esquerda.add_widget(esquerda_label)
 
