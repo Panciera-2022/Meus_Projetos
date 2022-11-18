@@ -3,6 +3,7 @@ from kivy.lang import Builder
 from telas import *
 from botoes import *
 import requests
+import certifi
 from bannervenda import BannerVenda
 import os
 from functools import partial
@@ -10,23 +11,20 @@ from myfirebase import MyFirebase
 from bannervendedor import BannerVendedor
 from datetime import date
 
+os.environ["SSL_CERT_FILE"] = certifi.where()
+
 GUI = Builder.load_file("main.kv")
-
-
 class MainApp(App):
     cliente = None
     produto = None
     unidade = None
 
-
-    # constroi a parte visual
     def build(self):
         self.firebase = MyFirebase()
         return GUI
 
-    # funcao que executa assim que inicia
     def on_start(self):
-        #carregar as fotos de perfil
+        # carregar as fotos de perfil
         arquivos = os.listdir("icones/fotos_perfil")
         pagina_fotoperfil = self.root.ids["fotoperfilpage"]
         lista_fotos = pagina_fotoperfil.ids["lista_fotos_perfil"]
@@ -34,7 +32,7 @@ class MainApp(App):
             imagem = ImageButton(source=f"icones/fotos_perfil/{foto}", on_release=partial(self.mudar_foto_perfil, foto))
             lista_fotos.add_widget(imagem)
 
-        #carregar as fotos dos clientes
+        # carregar as fotos dos clientes
         arquivos = os.listdir("icones/fotos_clientes")
         pagina_adicionarvendas = self.root.ids["adicionarvendaspage"]
         lista_clientes = pagina_adicionarvendas.ids["lista_clientes"]
@@ -46,8 +44,7 @@ class MainApp(App):
             lista_clientes.add_widget(imagem)
             lista_clientes.add_widget(label)
 
-
-        #carregar as fotos dos produtos
+        # carregar as fotos dos produtos
         arquivos = os.listdir("icones/fotos_produtos")
         pagina_adicionarvendas = self.root.ids["adicionarvendaspage"]
         lista_produtos = pagina_adicionarvendas.ids["lista_produtos"]
@@ -64,11 +61,8 @@ class MainApp(App):
         label_data = pagina_adicionarvendas.ids["label_data"]
         label_data.text = f"Data: {date.today().strftime('%d/%m/%Y')}"
 
-
-
-        # carrega as infos do usuário
+        # carrega as infos do usuario
         self.carregar_infos_usuario()
-
 
     def carregar_infos_usuario(self):
         try:
@@ -78,11 +72,11 @@ class MainApp(App):
             self.local_id = local_id
             self.id_token = id_token
 
-            # pegar informações do usuário
-            requisicao = requests.get(f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{self.local_id}.json")
+            # pegar informações do usuario
+            requisicao = requests.get(f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{self.local_id}.json?auth={self.id_token}")
             requisicao_dic = requisicao.json()
 
-            # preencher foto perfil
+            # preencher foto de perfil
             avatar = requisicao_dic['avatar']
             self.avatar = avatar
             foto_perfil = self.root.ids["foto_perfil"]
@@ -94,39 +88,27 @@ class MainApp(App):
             pagina_ajustes = self.root.ids["ajustespage"]
             pagina_ajustes.ids["id_vendedor"].text = f"Seu ID Único: {id_vendedor}"
 
-            # preencher total de vendas
+            # preencher o total de vendas
             total_vendas = requisicao_dic['total_vendas']
             self.total_vendas = total_vendas
             homepage = self.root.ids["homepage"]
-            homepage.ids["label_total_vendas"].text = f"[color=#000000]Total de Vendas:[/color] [b]R$ {total_vendas}[/b]"
+            homepage.ids["label_total_vendas"].text = f"[color=#000000]Total de Vendas:[/color] [b]R${total_vendas}[/b]"
 
-            # Preencher Equipe
+            # preencher equipe
             self.equipe = requisicao_dic["equipe"]
-
-
-
-            # preencher lista de vendas
-
-
-
-
-
-
-
-
 
             # preencher lista de vendas
             try:
                 vendas = requisicao_dic['vendas']
                 self.vendas = vendas
-                pagina_homepage = self.root.ids['homepage']
-                lista_vendas = pagina_homepage.ids['lista_vendas']
+                pagina_homepage = self.root.ids["homepage"]
+                lista_vendas = pagina_homepage.ids["lista_vendas"]
                 for id_venda in vendas:
                     venda = vendas[id_venda]
                     banner = BannerVenda(cliente=venda["cliente"], foto_cliente=venda["foto_cliente"],
                                          produto=venda["produto"], foto_produto=venda["foto_produto"],
-                                         data=venda["data"], preco=venda["preco"],
-                                         unidade=venda["unidade"], quantidade=venda["quantidade"])
+                                         data=venda['data'], preco=venda['preco'],
+                                         unidade=venda['unidade'], quantidade=venda["quantidade"])
 
                     lista_vendas.add_widget(banner)
             except Exception as excecao:
@@ -146,6 +128,7 @@ class MainApp(App):
             self.mudar_tela("homepage")
         except:
             pass
+
     def mudar_tela(self, id_tela):
         gerenciador_telas = self.root.ids["screen_manager"]
         gerenciador_telas.current = id_tela
@@ -155,15 +138,15 @@ class MainApp(App):
         foto_perfil.source = f"icones/fotos_perfil/{foto}"
 
         info = f'{{"avatar": "{foto}"}}'
-        requisicao = requests.patch(f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{self.local_id}.json"
-                                    , data=info)
+        requisicao = requests.patch(f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{self.local_id}.json?auth={self.id_token}",
+                                    data=info)
 
+        self.mudar_tela("ajustespage")
 
     def adicionar_vendedor(self, id_vendedor_adicionado):
         link = f'https://aplicativovendas-f1070-default-rtdb.firebaseio.com/.json?orderBy="id_vendedor"&equalTo="{id_vendedor_adicionado}"'
         requisicao = requests.get(link)
         requisicao_dic = requisicao.json()
-        print(requisicao_dic)
 
         pagina_adicionarvendedor = self.root.ids["adicionarvendedorpage"]
         mensagem_texto = pagina_adicionarvendedor.ids["mensagem_outrovendedor"]
@@ -177,15 +160,14 @@ class MainApp(App):
             else:
                 self.equipe = self.equipe + f",{id_vendedor_adicionado}"
                 info = f'{{"equipe": "{self.equipe}"}}'
-                requests.patch(f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{self.local_id}.json",
+                requests.patch(f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{self.local_id}.json?auth={self.id_token}",
                                data=info)
-                mensagem_texto.text = "Vendedor adicionado com sucesso"
-                # Adicionar um novo banner na lista de vendedores
+                mensagem_texto.text = "Vendedor Adicionado com Sucesso"
+                # adicionar um novo banner na lista de vendedores
                 pagina_listavendedores = self.root.ids["listarvendedorespage"]
                 lista_vendedores = pagina_listavendedores.ids["lista_vendedores"]
                 banner_vendedor = BannerVendedor(id_vendedor=id_vendedor_adicionado)
                 lista_vendedores.add_widget(banner_vendedor)
-
 
     def selecionar_cliente(self, foto, *args):
         self.cliente = foto.replace(".png", "")
@@ -195,7 +177,8 @@ class MainApp(App):
 
         for item in list(lista_clientes.children):
             item.color = (1, 1, 1, 1)
-        # pintar de azul a letra do item que selecionou
+            # pintar de azul a letra do item que selecionamos
+            # foto -> carrefour.png / Label -> Carrefour -> carrefour -> carrefour.png
             try:
                 texto = item.text
                 texto = texto.lower() + ".png"
@@ -212,7 +195,7 @@ class MainApp(App):
 
         for item in list(lista_produtos.children):
             item.color = (1, 1, 1, 1)
-        # pintar de azul a letra do item que selecionou
+            # pintar de azul a letra do item que selecionamos
             try:
                 texto = item.text
                 texto = texto.lower() + ".png"
@@ -221,12 +204,8 @@ class MainApp(App):
             except:
                 pass
 
-
     def selecionar_unidade(self, id_label, *args):
         pagina_adicionarvendas = self.root.ids["adicionarvendaspage"]
-
-
-        #pintar todo mundo de branco
         self.unidade = id_label.replace("unidades_", "")
         pagina_adicionarvendas.ids["unidades_kg"].color = (1, 1, 1, 1)
         pagina_adicionarvendas.ids["unidades_unidades"].color = (1, 1, 1, 1)
@@ -269,17 +248,14 @@ class MainApp(App):
                 pagina_adicionarvendas.ids["label_quantidade"].color = (1, 0, 0, 1)
 
         # dado que ele preencheu tudo, vamos executar o código de adicionar venda
-        if cliente and produto and unidade and preco and quantidade and (type(preco) == float) and (
-                type(quantidade) == float):
+        if cliente and produto and unidade and preco and quantidade and (type(preco) == float) and (type(quantidade)==float):
             foto_produto = produto + ".png"
             foto_cliente = cliente + ".png"
 
             info = f'{{"cliente": "{cliente}", "produto": "{produto}", "foto_cliente": "{foto_cliente}", ' \
                    f'"foto_produto": "{foto_produto}", "data": "{data}", "unidade": "{unidade}", ' \
                    f'"preco": "{preco}", "quantidade": "{quantidade}"}}'
-            requests.post(
-                f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{self.local_id}/vendas.json?auth={self.id_token}",
-                data=info)
+            requests.post(f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{self.local_id}/vendas.json?auth={self.id_token}",data=info)
 
             banner = BannerVenda(cliente=cliente, produto=produto, foto_cliente=foto_cliente, foto_produto=foto_produto,
                                  data=data, preco=preco, quantidade=quantidade, unidade=unidade)
@@ -287,13 +263,12 @@ class MainApp(App):
             lista_vendas = pagina_homepage.ids["lista_vendas"]
             lista_vendas.add_widget(banner)
 
-            requisicao = requests.get(f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{self.local_id}"
-                                      f"/total_vendas.json?auth={self.id_token}")
+            requisicao = requests.get(f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{self.local_id}/total_vendas.json?auth={self.id_token}")
             total_vendas = float(requisicao.json())
             total_vendas += preco
             info = f'{{"total_vendas": "{total_vendas}"}}'
-            requests.patch(f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{self.local_id}"
-                           f".json?auth={self.id_token}", data=info)
+            requests.patch(f"https://aplicativovendas-f1070-default-rtdb.firebaseio.com/{self.local_id}.json?auth={self.id_token}",
+                           data=info)
             homepage = self.root.ids["homepage"]
             homepage.ids["label_total_vendas"].text = f"[color=#000000]Total de Vendas:[/color] [b]R${total_vendas}[/b]"
             self.mudar_tela("homepage")
@@ -325,16 +300,14 @@ class MainApp(App):
                 for id_venda in vendas:
                     venda = vendas[id_venda]
                     total_vendas += float(venda["preco"])
-                    banner = BannerVenda(cliente=venda["cliente"], produto=venda["produto"],
-                                         foto_cliente=venda["foto_cliente"],
+                    banner = BannerVenda(cliente=venda["cliente"], produto=venda["produto"], foto_cliente=venda["foto_cliente"],
                                          foto_produto=venda["foto_produto"], data=venda["data"],
                                          preco=venda["preco"], quantidade=venda["quantidade"], unidade=venda["unidade"])
                     lista_vendas.add_widget(banner)
             except:
                 pass
         # preencher o total de vendas
-        pagina_todasvendas.ids[
-            "label_total_vendas"].text = f"[color=#000000]Total de Vendas:[/color] [b]R${total_vendas}[/b]"
+        pagina_todasvendas.ids["label_total_vendas"].text = f"[color=#000000]Total de Vendas:[/color] [b]R${total_vendas}[/b]"
 
         # redirecionar pra pagina todasvendaspage
         self.mudar_tela("todasvendaspage")
@@ -356,8 +329,7 @@ class MainApp(App):
 
             for id_venda in vendas:
                 venda = vendas[id_venda]
-                banner = BannerVenda(cliente=venda["cliente"], produto=venda["produto"],
-                                     foto_cliente=venda["foto_cliente"],
+                banner = BannerVenda(cliente=venda["cliente"], produto=venda["produto"], foto_cliente=venda["foto_cliente"],
                                      foto_produto=venda["foto_produto"], data=venda["data"],
                                      preco=venda["preco"], quantidade=venda["quantidade"], unidade=venda["unidade"])
                 lista_vendas.add_widget(banner)
@@ -365,8 +337,7 @@ class MainApp(App):
             pass
         # preencher o total de vendas
         total_vendas = dic_info_vendedor["total_vendas"]
-        pagina_vendasoutrovendedor.ids[
-            "label_total_vendas"].text = f"[color=#000000]Total de Vendas:[/color] [b]R${total_vendas}[/b]"
+        pagina_vendasoutrovendedor.ids["label_total_vendas"].text = f"[color=#000000]Total de Vendas:[/color] [b]R${total_vendas}[/b]"
 
         # preencher foto de perfil
         foto_perfil = self.root.ids["foto_perfil"]
@@ -374,6 +345,5 @@ class MainApp(App):
         foto_perfil.source = f"icones/fotos_perfil/{avatar}"
 
         self.mudar_tela("vendasoutrovendedorpage")
-
 
 MainApp().run()
