@@ -9,6 +9,7 @@
 #:include kv/vendasoutrovendedorpage.kv
 #:import utils kivy.utils
 
+
 FloatLayout:
     canvas:
         Color:
@@ -17,7 +18,7 @@ FloatLayout:
             size: self.size
             pos: self.pos
     Image:
-        pos_hint: {"right":1, "top": 0.9}
+        pos_hint: {"right":1 , "top": 0.9}
         size_hint: 1, 0.2
         source: "icones/hash.png"
         id: foto_perfil
@@ -52,4 +53,3 @@ FloatLayout:
         VendasOutroVendedorPage:
             name: "vendasoutrovendedorpage"
             id: vendasoutrovendedorpage
-
